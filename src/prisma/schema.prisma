@@ -1,0 +1,33 @@
+// Это минимальная схема - будем расширять по мере развития
+generator client{
+    provider = "prisma-client-js"
+}
+datasource db{
+    provider = "sqlite"
+}
+model User {
+    id  String @id @default(cuid())
+    email String @unique
+    name String
+    createdAt DateTime @default(now())
+    polls     Poll[]
+}
+model Poll {
+    id        String   @id @default(cuid())
+  question  String
+  options   String   // Теперь это строка, будем хранить JSON
+  createdAt DateTime @default(now())
+  createdBy String
+  votes     Vote[]
+  
+  // Добавляем связь с пользователем
+  user      User?    @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+}
+model Vote {
+  id        String   @id @default(cuid())
+  pollId    String
+  optionIndex Int    // Индекс выбранного варианта (0, 1, 2...)
+  createdAt DateTime @default(now())
+  
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+}
