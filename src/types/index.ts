@@ -1,4 +1,4 @@
-export type PollOptions{
+export interface PollOption{
     id:string;
     text:string;
     votes:number;
@@ -6,7 +6,7 @@ export type PollOptions{
 export interface Poll{
     id:string;
     question:string;
-    options:PollOptions[];
+    options:PollOption[];
     createdAt:Date;
     createdBy:string;
     createdByName:string;
