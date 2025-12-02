@@ -13,7 +13,7 @@ export default function CreatePoll() {
   // Если пользователь не авторизован, показываем сообщение
   if (!session) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="bg-white p-6 rounded-lg shadow-md text-center">
           <h2 className="text-xl font-semibold mb-4">Доступ запрещен</h2>
           <p className="mb-4">
