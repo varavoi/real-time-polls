@@ -1,64 +1,69 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export default function CreatePoll(){
-    const {data:session} = useSession()
-    const router=useRouter()
-     const [question, setQuestion] = useState('')
-     const [options,setOptions] = useState(['',''])
-     const [loading,setLoading] = useState(false)
-     // Если пользователь не авторизован, показываем сообщение
-     if(!session){
-        return (
-            <div>
-                <div>
-                    <h2>Доступ запрещен</h2>
-                    <p>Для создания опроса необходимо войти в систему.</p>
-                    <button
-                        onClick={()=>router.push('/auth/signin')}
-                    >Войти</button>
-                </div>
-            </div>
-        )
-     }
-     const addOption=()=>{
-        if(options.length<6){
-            setOptions([...options,''])
-        }
-     }
-     const removeOption=(index:number)=>{
-        if(options.length>2){
-            const newOptions = [...options]
-            newOptions.splice(index,1)
-            setOptions(newOptions)
-        }
-     }
-     const updateOption = (index:number,value:string)=>{
-        const newOptions = [...options]
-        newOptions[index]=value
-        setOptions(newOptions)
-     }
-     const handleSubmit = async (e:React.FormEvent)=>{
-        e.preventDefault()
-        // Валидация
-        if(!question.trim()){
-            alert('Введите вопрос опроса')
-            return
-        }
-        const validOptions =options.filter(opt=>opt.trim() !=='')
-        if(validOptions.length<2){
-            alert('Добавьте хотя бы 2 варианта ответа');
-            return;
-        }
-        setLoading(true)
-        try {
-      const response = await fetch('/api/polls', {
-        method: 'POST',
+export default function CreatePoll() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [question, setQuestion] = useState("");
+  const [options, setOptions] = useState(["", ""]);
+  const [loading, setLoading] = useState(false);
+  // Если пользователь не авторизован, показываем сообщение
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-md text-center">
+          <h2 className="text-xl font-semibold mb-4">Доступ запрещен</h2>
+          <p className="mb-4">
+            Для создания опроса необходимо войти в систему.
+          </p>
+          <button
+            onClick={() => router.push("/auth/signin")}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Войти
+          </button>
+        </div>
+      </div>
+    );
+  }
+  const addOption = () => {
+    if (options.length < 6) {
+      setOptions([...options, ""]);
+    }
+  };
+  const removeOption = (index: number) => {
+    if (options.length > 2) {
+      const newOptions = [...options];
+      newOptions.splice(index, 1);
+      setOptions(newOptions);
+    }
+  };
+  const updateOption = (index: number, value: string) => {
+    const newOptions = [...options];
+    newOptions[index] = value;
+    setOptions(newOptions);
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Валидация
+    if (!question.trim()) {
+      alert("Введите вопрос опроса");
+      return;
+    }
+    const validOptions = options.filter((opt) => opt.trim() !== "");
+    if (validOptions.length < 2) {
+      alert("Добавьте хотя бы 2 варианта ответа");
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch("/api/polls", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           question: question.trim(),
@@ -67,24 +72,24 @@ export default function CreatePoll(){
       });
 
       if (response.ok) {
-        router.push('/polls');
+        router.push("/polls");
       } else {
-        alert('Ошибка при создании опроса');
+        alert("Ошибка при создании опроса");
       }
     } catch {
-      alert('Произошла ошибка');
+      alert("Произошла ошибка");
     } finally {
       setLoading(false);
     }
   };
-     return (
+  return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
             Создать новый опрос
           </h1>
-          
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Поле вопроса */}
@@ -123,7 +128,7 @@ export default function CreatePoll(){
                         <button
                           type="button"
                           onClick={() => removeOption(index)}
-                         className="px-3 py-2 bg-red-500 text-white
+                          className="px-3 py-2 bg-red-500 text-white
                          rounded hover:bg-red-600 transition"
                         >
                           Удалить
@@ -132,7 +137,7 @@ export default function CreatePoll(){
                     </div>
                   ))}
                 </div>
-                
+
                 {options.length < 6 && (
                   <button
                     type="button"
@@ -143,7 +148,7 @@ export default function CreatePoll(){
                     + Добавить вариант
                   </button>
                 )}
-                
+
                 <p className="mt-2 text-sm text-gray-500">
                   Максимум 6 вариантов ответа
                 </p>
@@ -165,7 +170,7 @@ export default function CreatePoll(){
                   className="flex-1 bg-blue-500 text-white py-2 px-4
                   rounded hover:bg-blue-600 transition disabled:opacity-50"
                 >
-                  {loading ? 'Создание...' : 'Создать опрос'}
+                  {loading ? "Создание..." : "Создать опрос"}
                 </button>
               </div>
             </form>
